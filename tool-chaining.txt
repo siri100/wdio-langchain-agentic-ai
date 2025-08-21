@@ -1,0 +1,25 @@
+To achieve true tool chaining and maintain browser state between actions, you need to ensure that all browser interactions happen within the same Node.js process and WebdriverIO session. Here are the main approaches:
+
+1. Single Long-Lived Node.js Process
+Run a Node.js server (e.g., with Express or Fastify) that manages a persistent WebdriverIO browser session.
+Expose endpoints (e.g., /open, /navigate, /click, /set-value) that your Python tools call via HTTP requests.
+Each tool sends a request to the server, which uses the same browser instance for all actions.
+Benefits:
+
+True stateful chaining, all actions share the same browser.
+2. Combine Actions in One Tool
+Instead of separate tools, create a single tool (and Node.js script) that performs a sequence of actions (open, navigate, click, etc.) based on parameters.
+The agent calls this tool with a structured instruction or JSON payload.
+Benefits:
+
+Simpler, but less flexible for dynamic multi-step chains.
+3. Use a State Store (Advanced)
+Store the browser session ID or WebDriver endpoint in a file or database.
+Each tool/script reads this info and attaches to the existing session.
+Requires careful management and is more complex.
+Recommended: Node.js Server Approach
+Example:
+
+Start a Node.js server that keeps a browser open.
+Update your Python tools to send HTTP requests to this server for each action.
+Node.js (Express) Example:
